@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeTodo, updateTodo } from "../features/todo/todoSlice";
+import { removeTodo, updateTodo, toggleComplete } from "../features/todo/todoSlice";
 
 function Todos() {
   const todos = useSelector((state) => state.todos);
@@ -13,64 +13,58 @@ function Todos() {
     }
   };
 
+  const handleComplete = (id) => {
+    dispatch(toggleComplete({ id }));
+  };
+
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-zinc-900 rounded-lg shadow-md">
-      <h2 className="text-white text-2xl font-semibold text-center">Todo List</h2>
-      <ul className="mt-4">
+    <div className="max-w-lg w-full mx-auto mt-10 p-6 bg-zinc-900 rounded-xl shadow-lg transition-all duration-300">
+      <h2 className="text-white text-2xl font-semibold text-center mb-6 tracking-wide">
+        Todo List 🎯
+      </h2>
+      <ul className="mt-4 space-y-4">
         {todos.map((todo) => (
           <li
-            className="mt-3 flex justify-between items-center bg-zinc-800 px-4 py-2 rounded-lg shadow-sm"
             key={todo.id}
+            className={`bg-zinc-800 p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl ${
+              todo.completed
+                ? "opacity-70 line-through text-gray-400"
+                : "text-white hover:bg-zinc-700"
+            }`}
           >
-            <span className="text-white text-lg">{todo.text}</span>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => handleUpdate(todo.id, todo.text)}
-                className="text-white bg-blue-500 border-0 p-2 focus:outline-none hover:bg-blue-600 rounded-lg transition-all"
-                title="Edit Todo"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <label className="flex items-start space-x-3 cursor-pointer min-w-0 flex-1">
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => handleComplete(todo.id)}
+                  className="w-5 h-5 mt-1 accent-green-500 rounded-md cursor-pointer transition-colors duration-200 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-zinc-900 shrink-0"
+                />
+                <span className="text-lg select-none break-words w-full min-w-0">
+                  {todo.text}
+                </span>
+              </label>
+              <div className="flex space-x-2 shrink-0">
+                <button
+                  onClick={() => handleUpdate(todo.id, todo.text)}
+                  className="text-white bg-blue-600 border-0 p-2 focus:outline-none hover:bg-blue-700 rounded-lg transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Edit Todo"
+                  disabled={todo.completed}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.862 3.487a2.25 2.25 0 113.182 3.182l-9.82 9.82a4.5 4.5 0 01-2.121 1.178l-3.048.762a.75.75 0 01-.91-.91l.761-3.048a4.5 4.5 0 011.178-2.121l9.82-9.82z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 4.5L16.862 3.487a2.25 2.25 0 10-3.182 3.182l2.637 2.637M10.5 15.75L7.5 18.75"
-                  />
-                </svg>
-              </button>
-
-              <button
-                onClick={() => dispatch(removeTodo(todo.id))}
-                className="text-white bg-red-500 border-0 p-2 focus:outline-none hover:bg-red-600 rounded-lg transition-all"
-                title="Delete Todo"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
+                  ✏️
+                </button>
+                <button
+                  onClick={() => dispatch(removeTodo(todo.id))}
+                  className="text-white bg-red-600 border-0 p-2 focus:outline-none hover:bg-red-700 rounded-lg transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
+                  title="Delete Todo"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                  🗑️
+                </button>
+              </div>
             </div>
+            <span className="block text-gray-400 text-sm mt-2 text-right italic opacity-75 transition-opacity duration-200 hover:opacity-100">
+              {todo.day}, {todo.date}
+            </span>
           </li>
         ))}
       </ul>
